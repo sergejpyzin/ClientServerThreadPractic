@@ -22,11 +22,13 @@ public class Client {
       String input = serverIn.nextLine();
       System.out.println("Сообщение от сервера: " + input);
 
-      // Отправили идентфиикатор на сервер
+      // Отправили идентифиикатор на сервер
       new PrintWriter(serverSocket.getOutputStream(), true).println(UUID.randomUUID());
 
       new Thread(new ServerReader(serverSocket)).start();
       new Thread(new ServerWriter(serverSocket)).start();
+
+
     } catch (IOException e) {
       throw new RuntimeException("Не удалось подключиться к серверу: " + e.getMessage(), e);
     }

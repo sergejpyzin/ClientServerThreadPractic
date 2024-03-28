@@ -16,6 +16,9 @@ class ServerReader implements Runnable {
         try (Scanner in = new Scanner(serverSocket.getInputStream())) {
             while (in.hasNext()) {
                 String input = in.nextLine();
+                if (input.equals("/exit") || input.equals("/all")){
+                    continue;
+                }
                 System.out.println("Сообщение от сервера: " + input);
             }
         } catch (IOException e) {

@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 class ClientHandler implements Runnable {
 
@@ -51,8 +52,14 @@ class ClientHandler implements Runnable {
                     }
                 }
 
-                out.println("Cообщение [" + input + "] получено");
-                if (Objects.equals("exit", input)) {
+                if (Objects.equals("/all", input)) {
+                    // Отправляем список всех текущих пользователей клиенту
+                    String allClientsList = clients.keySet().stream()
+                            .collect(Collectors.joining("\n"));
+                    out.println("Список всех текущих пользователей:\n" + allClientsList);
+                }
+
+                if (Objects.equals("/exit", input)) {
                     System.out.println("Клиент отключился");
                     // Удаляем клиента из списка активных клиентов
                     clients.remove(clientId);
@@ -63,13 +70,18 @@ class ClientHandler implements Runnable {
                         }
                     }
                     break;
+                } else if (Objects.equals(("/all"), input)) {
+
+
+                } else {
+                    out.println("Cообщение [" + input + "] получено");
+
                 }
             }
         } catch (IOException e) {
             System.err.println("Произошла ошибка при взаимодействии с клиентом " + clientSocket + ": " + e.getMessage());
         }
 
-        // FIXME: При отключении клиента нужно удалять его из Map и оповещать остальных
         try {
             clientSocket.close();
         } catch (IOException e) {

@@ -7,37 +7,37 @@ import java.util.Objects;
 import java.util.Scanner;
 
 class ServerWriter implements Runnable {
-    private final Socket serverSocket;
+  private final Socket serverSocket;
 
-    public ServerWriter(Socket serverSocket) {
-        this.serverSocket = serverSocket;
+  public ServerWriter(Socket serverSocket) {
+    this.serverSocket = serverSocket;
+  }
+
+  @Override
+  public void run() {
+    Scanner consoleReader = new Scanner(System.in);
+    try (PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true)) {
+      while (true) {
+        String msgFromConsole = consoleReader.nextLine();
+        out.println(msgFromConsole);
+
+        // uuid msg
+
+        if (Objects.equals("/exit", msgFromConsole)) {
+          System.out.println("Отключаемся...");
+          break;
+        }
+      }
+    } catch (IOException e) {
+      System.err.println("Ошибка при отправке на сервер: " + e.getMessage());
     }
 
-    @Override
-    public void run() {
-        Scanner consoleReader = new Scanner(System.in);
-        try (PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true)) {
-            while (true) {
-                String msgFromConsole = consoleReader.nextLine();
-                out.println(msgFromConsole);
 
-                // uuid msg
-
-                if (Objects.equals("exit", msgFromConsole)) {
-                    System.out.println("Отключаемся...");
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Ошибка при отправке на сервер: " + e.getMessage());
-        }
-
-
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            System.err.println("Ошибка при отключении от сервера: " + e.getMessage());
-        }
+    try {
+      serverSocket.close();
+    } catch (IOException e) {
+      System.err.println("Ошибка при отключении от сервера: " + e.getMessage());
     }
+  }
 
 }
